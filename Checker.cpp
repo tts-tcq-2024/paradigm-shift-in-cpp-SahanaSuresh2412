@@ -8,9 +8,9 @@ bool batteryIsOk(float temperature, float soc, float chargeRate) {
   bool chargeRateOk = (chargeRate <= 0.8);
 
   if (!temperatureOk || !socOk || !chargeRateOk) {
-    if (!temperatureOk) cout << "Temperature out of range!\n";
-    if (!socOk) cout << "State of Charge out of range!\n";
-    if (!chargeRateOk) cout << "Charge Rate out of range!\n";
+    // if (!temperatureOk) cout << "Temperature out of range!\n";
+    // if (!socOk) cout << "State of Charge out of range!\n";
+    // if (!chargeRateOk) cout << "Charge Rate out of range!\n";
     return false;
   }
   return true;
