@@ -43,12 +43,14 @@ bool checkChargeRate(float chargeRate, std::string &message)
 // Main function combining checks and I/O
 bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message) 
 {
-    return (checkTemperature(temperature, message) && checkSOC(soc, message) && checkChargeRate(chargeRate, message)); 
+    if (!(checkTemperature(temperature, message) && checkSOC(soc, message) && checkChargeRate(chargeRate, message))) return false;
+    message = "Battery is OK.";
+    return true;
 }
 
 // Test function
 void testBatteryIsOk() {
-    std::string message = "Battery is OK.";
+    std::string message;
 
     // Test case where battery is OK
     assert(batteryIsOk(25, 70, 0.7, message) == true);
