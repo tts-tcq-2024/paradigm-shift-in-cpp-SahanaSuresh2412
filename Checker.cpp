@@ -31,7 +31,7 @@ bool checkChargeRate(float chargeRate, std::string &message) {
 
 // Function that uses pure functions and adds I/O
 bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message) {
-    if (!checkTemperature(temperature, message)) & (!checkSOC(soc, message)) & (!checkChargeRate(chargeRate, message)) 
+    if ((!checkTemperature(temperature, message)) & (!checkSOC(soc, message)) & (!checkChargeRate(chargeRate, message))) 
     {
         return false;
     }
