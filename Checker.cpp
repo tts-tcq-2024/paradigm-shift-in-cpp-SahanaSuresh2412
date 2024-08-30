@@ -56,7 +56,7 @@ void testBatteryIsOk() {
 
     // Test case where temperature is too low
     assert(batteryIsOk(-1, 70, 0.7, message) == false);
-    assert(message == "Temperature too high!");
+    assert(message == "Temperature too low!");
 
     // Test case where temperature is too high
     assert(batteryIsOk(50, 70, 0.7, message) == false);
