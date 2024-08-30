@@ -1,12 +1,10 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-
 using namespace std;
 
-// Pure function to check temperature
-bool checkTemperature(float temperature, std::string &message) 
-{
+// Example pure check functions
+bool checkTemperature(float temperature, std::string &message) {
     if (temperature < 0) {
         message = "Temperature too low!";
         return false;
@@ -17,9 +15,7 @@ bool checkTemperature(float temperature, std::string &message)
     return true;
 }
 
-// Pure function to check state of charge (SOC)
-bool checkSOC(float soc, std::string &message) 
-{
+bool checkSOC(float soc, std::string &message) {
     if (soc < 20) {
         message = "State of Charge too low!";
         return false;
@@ -30,9 +26,7 @@ bool checkSOC(float soc, std::string &message)
     return true;
 }
 
-// Pure function to check charge rate
-bool checkChargeRate(float chargeRate, std::string &message) 
-{
+bool checkChargeRate(float chargeRate, std::string &message) {
     if (chargeRate > 0.8) {
         message = "Charge Rate too high!";
         return false;
@@ -40,12 +34,24 @@ bool checkChargeRate(float chargeRate, std::string &message)
     return true;
 }
 
+// Helper function to perform all checks and update the message
+bool performCheck(float temperature, float soc, float chargeRate, std::string &message) {
+    bool temperatureOk = checkTemperature(temperature, message);
+    bool socOk = checkSOC(soc, message);
+    bool chargeRateOk = checkChargeRate(chargeRate, message);
+
+    return temperatureOk && socOk && chargeRateOk;
+}
+
 // Main function combining checks and I/O
-bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message) 
-{
-    if (!(checkTemperature(temperature, message) && checkSOC(soc, message) && checkChargeRate(chargeRate, message))) return false;
-    message = "Battery is OK.";
-    return true;
+bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message) {
+    bool allChecksOk = performCheck(temperature, soc, chargeRate, message);
+
+    if (allChecksOk) {
+        message = "Battery is OK.";
+    }
+
+    return allChecksOk;
 }
 
 // Test function
