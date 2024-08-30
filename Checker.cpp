@@ -13,12 +13,23 @@ bool checkTemperature(float temperature, std::string &message)
 }
 
 // Pure function to check state of charge (SOC)
-bool checkSOC(float soc, std::string &message) 
+bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message) 
 {
-    if (soc < 20 || soc > 80) {
-        message = "State of Charge out of range!";
+    bool temperatureOk = checkTemperature(temperature, message);
+    bool socOk = checkSOC(soc, message);
+    bool chargeRateOk = checkChargeRate(chargeRate, message);
+
+    if (!temperatureOk) {
         return false;
     }
+    if (!socOk) {
+        return false;
+    }
+    if (!chargeRateOk) {
+        return false;
+    }
+
+    message = "Battery is OK.";
     return true;
 }
 
