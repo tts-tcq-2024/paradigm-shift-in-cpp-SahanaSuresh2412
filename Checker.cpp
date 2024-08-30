@@ -25,7 +25,7 @@ bool checkSoc(float soc)
 
 bool batteryIsOk(float temperature, float soc, float chargeRate) 
 {
-   return checkTemperature(temperature) & checkSoc(soc) & (chargeRate > 0.8) ;
+   return (checkTemperature(temperature)) & (checkSoc(soc)) & (chargeRate > 0.8) ;
 }
 
 int main() 
