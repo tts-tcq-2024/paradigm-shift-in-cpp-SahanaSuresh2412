@@ -3,31 +3,39 @@
 #include <string>
 using namespace std;
 
-void checkForWarning(float value, const float lowerLimit, const float upperLimit, std::string &warning, const std::string &type) {
-    const float tolerance = (upperLimit - lowerLimit) * 0.05; // 5% of the range
-    if (value >= lowerLimit && value < lowerLimit + tolerance) {
+void checkForLowWarning(float value, const float lowerLimit, const float upperLimit, std::string &warning, const std::string &type, const float tolerance)
+{
+    if (value >= lowerLimit && value < lowerLimit + tolerance) 
+    {
         warning += "Warning: Approaching low " + type + " limit! ";
-    } else if (value > upperLimit - tolerance && value <= upperLimit) {
+    }
+}
+
+void checkForHighWarning(float value, const float lowerLimit, const float upperLimit, std::string &warning, const std::string &type, const float tolerance)
+{
+    if (value > upperLimit - tolerance && value <= upperLimit) 
+    {
         warning += "Warning: Approaching high " + type + " limit! ";
     }
+}
+
+void checkForWarning(float value, const float lowerLimit, const float upperLimit, std::string &warning, const std::string &type) {
+    const float tolerance = (upperLimit - lowerLimit) * 0.05; // 5% of the range
+    checkForLowWarning(value, lowerLimit, upperLimit, warning, type, tolerance);
+    checkForHighWarning(value, lowerLimit, upperLimit, warning, type, tolerance);
 }
 
 bool isTemperatureWithinRange(float temperature, std::string &message, std::string &warning) {
     const float lowerLimit = 0.0;
     const float upperLimit = 45.0;
     
-    if (temperature < lowerLimit) 
-    {
+    if (temperature < lowerLimit) {
         message = "Temperature too low!";
         return false;
-    } 
-    else if (temperature > upperLimit) 
-    {
+    } else if (temperature > upperLimit) {
         message = "Temperature too high!";
         return false;
-    }
-    else
-    {
+    } else {
         checkForWarning(temperature, lowerLimit, upperLimit, warning, "temperature");
         return true;
     }
@@ -37,71 +45,49 @@ bool isSOCWithinRange(float soc, std::string &message, std::string &warning) {
     const float lowerLimit = 20.0;
     const float upperLimit = 80.0;
     
-    if (soc < lowerLimit) 
-    {
+    if (soc < lowerLimit) {
         message = "State of Charge too low!";
         return false;
-    } 
-    else if (soc > upperLimit) 
-    {
+    } else if (soc > upperLimit) {
         message = "State of Charge too high!";
         return false;
-    }
-    else
-    {
+    } else {
         checkForWarning(soc, lowerLimit, upperLimit, warning, "State of Charge");
         return true;
     }
 }
+
 bool isChargeRateOK(float chargeRate, std::string &message, std::string &warning) {
     const float upperLimit = 0.8;
     const float tolerance = upperLimit * 0.05; // 5% of the upper limit
-
-    if (chargeRate > upperLimit) 
-    {
+    
+    if (chargeRate > upperLimit) {
         message = "Charge Rate too high!";
         return false;
-    } 
-    else if (chargeRate >= upperLimit - tolerance) 
-    {
+    } else if (chargeRate >= upperLimit - tolerance) {
         warning += "Warning: Approaching high charge rate limit!";
     }
     return true;
 }
- 
+
 bool isTemperatureAndSOCWithinRange(float temperature, float soc, std::string &message, std::string &warning) {
-	if(isTemperatureWithinRange(temperature, message, warning) && isSOCWithinRange(soc, message, warning)) 
-	{
-		return true;
-	}
-	else 
-	{
-		return false;
-	}
- 
+    return isTemperatureWithinRange(temperature, message, warning) && isSOCWithinRange(soc, message, warning);
 }
+
 bool performCheck(float temperature, float soc, float chargeRate, std::string &message, std::string &warning) {
-    if(isTemperatureAndSOCWithinRange(temperature, soc, message, warning) && isChargeRateOK(chargeRate, message, warning)) 
-    {
-		return true;
-	}
-	else 
-	{
-		return false;
-	}
+    return isTemperatureAndSOCWithinRange(temperature, soc, message, warning) && isChargeRateOK(chargeRate, message, warning);
 }
+
 bool batteryIsOk(float temperature, float soc, float chargeRate, std::string &message, std::string &warning) {
     bool allChecksOk = performCheck(temperature, soc, chargeRate, message, warning);
-    if (allChecksOk) 
-    {
+    if (allChecksOk) {
         message = "Battery is OK.";
-		return true;
+        return true;
+    } else {
+        return false;
     }
-	else 
-	{
-		return false;
-	}
 }
+
 void testBatteryChecks() {
     std::string message;
     std::string warning;
@@ -144,7 +130,7 @@ void testBatteryChecks() {
 
     // Test case: Approaching high temperature limit (warning)
     warning.clear(); // Clear warning for this test
-    assert(batteryIsOk(44.5, 50, 0.7, message, warning) == true);
+    assert(batteryIsOk(44.75, 50, 0.7, message, warning) == true);
     assert(message == "Battery is OK.");
     assert(warning == "Warning: Approaching high temperature limit! ");
 
@@ -165,7 +151,7 @@ void testBatteryChecks() {
     assert(batteryIsOk(25, 50, 0.76, message, warning) == true);
     assert(message == "Battery is OK.");
     assert(warning == "Warning: Approaching high charge rate limit!");
-    
+
     warning.clear(); // Clear warning for this test
     assert(batteryIsOk(0.5, 20.5, 0.76, message, warning) == true);
     assert(message == "Battery is OK.");
